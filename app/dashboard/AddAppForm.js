@@ -60,7 +60,7 @@ export default function AddAppForm() {
         disabled={loading}
         className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap"
       >
-        {loading ? 'Adding app (analyzing reviews)...' : '+ Track new app'}
+        {loading ? 'Adding app (analyzing reviews)...' : 'Track new app'}
       </button>
       {error && <p className="text-red-600 text-sm sm:ml-2 sm:self-center">{error}</p>}
     </form>
