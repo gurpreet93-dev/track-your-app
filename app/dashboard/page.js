@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase-server";
 import AddAppForm from './AddAppForm';
+import Logo from '../Logo';
 
 export default async function Dashboard() {
   const supabase = await createClient();
@@ -78,11 +79,10 @@ export default async function Dashboard() {
 
   return (
     <main className="min-h-screen bg-gray-50 px-6 py-10">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
+            <Logo size={24} />
+            <h1 className="text-2xl font-semibold text-gray-900 mt-2">
               Your Dashboard
             </h1>
             <p className="text-gray-500 text-sm mt-1">

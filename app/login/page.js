@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase-client';
+import Logo from '../Logo';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -40,6 +41,10 @@ export default function Login() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50">
       <div className="max-w-sm w-full">
+        <div className="flex justify-center mb-6">
+          <Logo size={40} />
+        </div>
+        <h1 className="text-3xl font-semibold text-gray-900 mb-2 text-center">Welcome back</h1>
         <h1 className="text-3xl font-semibold text-gray-900 mb-2 text-center">Welcome back</h1>
         <p className="text-gray-500 text-sm mb-8 text-center">Log in to your dashboard</p>
 

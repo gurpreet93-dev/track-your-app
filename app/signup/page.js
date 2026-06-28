@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '../../lib/supabase-client';
+import Logo from '../Logo';
 
 function CapturePendingAppLink() {
   const searchParams = useSearchParams();
@@ -54,6 +55,10 @@ function SignUpForm() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 bg-gray-50">
       <div className="max-w-sm w-full">
+        <div className="flex justify-center mb-6">
+          <Logo size={40} />
+        </div>
+        <h1 className="text-3xl font-semibold text-gray-900 mb-2 text-center">Create your account</h1>
         <h1 className="text-3xl font-semibold text-gray-900 mb-2 text-center">Create your account</h1>
         <p className="text-gray-500 text-sm mb-8 text-center">Start tracking your app's reviews</p>
 

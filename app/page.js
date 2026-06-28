@@ -1,12 +1,13 @@
 import HomepageForm from './HomepageForm';
 import { AlertTriangle, Mail, TrendingUp, LayoutGrid } from 'lucide-react';
+import Logo from './Logo';
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
 
       <nav className="flex justify-between items-center px-6 py-4 max-w-5xl mx-auto">
-        <span className="font-semibold text-gray-900">Track Your App</span>
+        <Logo />
         <a href="/login" className="text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg transition-colors">
           Log in
         </a>
