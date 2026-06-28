@@ -1,15 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '../../lib/supabase-client';
 
-export default function SignUp() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+function CapturePendingAppLink() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -18,6 +13,16 @@ export default function SignUp() {
       sessionStorage.setItem('pendingAppLink', appLink);
     }
   }, [searchParams]);
+
+  return null;
+}
+
+function SignUpForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   async function handleSignUp(e) {
     e.preventDefault();
@@ -107,5 +112,16 @@ export default function SignUp() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function SignUp() {
+  return (
+    <>
+      <Suspense fallback={null}>
+        <CapturePendingAppLink />
+      </Suspense>
+      <SignUpForm />
+    </>
   );
 }
