@@ -44,7 +44,7 @@ const urgencyColors = {
   low:      { bg: '#EAF3DE', border: '#97C459', text: '#173404', label: '#27500A' }
 };
 
-function buildEmailHtml({ recipientName, appName, reviews, dashboardUrl }) {
+function buildAppSection(app, reviews) {
   const total = reviews.length;
   const actionItems = reviews.filter(r => ['critical', 'high', 'medium'].includes(r.urgency));
   const positive = reviews.filter(r => r.sentiment === 'positive').length;
@@ -64,43 +64,46 @@ function buildEmailHtml({ recipientName, appName, reviews, dashboardUrl }) {
   }).join('');
 
   const actionItemsHtml = actionItems.length === 0
-    ? `<p style="font-size:13px;color:#5F5E5A;">No high-priority issues today — nice and quiet.</p>`
+    ? `<p style="font-size:13px;color:#5F5E5A;margin:0;">No high-priority issues today.</p>`
     : actionItems.map(r => {
         const colors = urgencyColors[r.urgency] || urgencyColors.medium;
-        return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;"><tr><td style="background-color:${colors.bg};border-left:3px solid ${colors.border};border-radius:0 8px 8px 0;padding:12px 14px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="font-size:11px;font-weight:600;color:${colors.label};text-transform:uppercase;">${r.urgency.toUpperCase()} · ${r.category?.replace('_', ' ')}</td><td style="font-size:12px;color:${colors.text};text-align:right;">${r.rating}★ — ${escapeHtml(r.author)}</td></tr></table><p style="font-size:13px;font-weight:600;color:${colors.text};margin:8px 0 0;">${escapeHtml(r.summary)}</p></td></tr></table>`;
+        return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;"><tr><td style="background-color:${colors.bg};border-left:3px solid ${colors.border};border-radius:0 8px 8px 0;padding:10px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="font-size:11px;font-weight:600;color:${colors.label};text-transform:uppercase;">${r.urgency.toUpperCase()} · ${r.category?.replace('_', ' ')}</td><td style="font-size:12px;color:${colors.text};text-align:right;">${r.rating}★ — ${escapeHtml(r.author)}</td></tr></table><p style="font-size:13px;font-weight:600;color:${colors.text};margin:6px 0 0;">${escapeHtml(r.summary)}</p></td></tr></table>`;
       }).join('');
 
+  return `
+    <tr><td style="padding:24px 28px 0;">
+      <h2 style="font-size:16px;font-weight:600;color:#2C2C2A;margin:0 0 14px;border-bottom:1px solid #E5E3DB;padding-bottom:10px;">${escapeHtml(app.app_name)}</h2>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;"><tr>
+        <td style="background-color:#F1EFE8;border-radius:8px;padding:10px;width:33%;text-align:center;"><div style="font-size:18px;font-weight:600;color:#2C2C2A;">${total}</div><div style="font-size:10px;color:#888780;margin-top:2px;">Analysed</div></td>
+        <td style="width:8px;"></td>
+        <td style="background-color:#FCEBEB;border-radius:8px;padding:10px;width:33%;text-align:center;"><div style="font-size:18px;font-weight:600;color:#A32D2D;">${actionItems.length}</div><div style="font-size:10px;color:#A32D2D;margin-top:2px;">High priority</div></td>
+        <td style="width:8px;"></td>
+        <td style="background-color:#EAF3DE;border-radius:8px;padding:10px;width:33%;text-align:center;"><div style="font-size:18px;font-weight:600;color:#27500A;">${positive}</div><div style="font-size:10px;color:#27500A;margin-top:2px;">Positive</div></td>
+      </tr></table>
+      <p style="font-size:11px;font-weight:600;color:#888780;text-transform:uppercase;margin:0 0 8px;">Rating breakdown</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">${starRowsHtml}</table>
+      <p style="font-size:11px;font-weight:600;color:#888780;text-transform:uppercase;margin:0 0 8px;">Key action points</p>
+      ${actionItemsHtml}
+      <div style="text-align:center;margin-top:14px;">
+        <a href="https://track-your-app.vercel.app/dashboard/${app.id}" style="display:inline-block;background-color:#FFFFFF;border:1px solid #D85A30;color:#D85A30;font-size:12px;font-weight:600;text-decoration:none;padding:8px 18px;border-radius:8px;">View ${escapeHtml(app.app_name)} dashboard</a>
+      </div>
+    </td></tr>
+  `;
+}
+
+function buildEmailHtml({ recipientName, appSections }) {
   return `
   <div style="font-family:Helvetica,Arial,sans-serif;background-color:#F1EFE8;padding:24px 0;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
       <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="background-color:#FFFFFF;border-radius:12px;overflow:hidden;">
-        <tr><td style="padding:28px 28px 8px;">
+        <tr><td style="padding:28px 28px 0;">
           <p style="font-size:11px;font-weight:600;color:#888780;text-transform:uppercase;margin:0 0 6px;">Track Your App</p>
-          <h1 style="font-size:19px;font-weight:600;color:#2C2C2A;margin:0 0 4px;">Your daily dose of ${escapeHtml(appName)} reviews</h1>
-          <p style="font-size:13px;color:#5F5E5A;margin:0 0 20px;">Hi ${escapeHtml(recipientName)} — here's your daily summary.</p>
+          <h1 style="font-size:19px;font-weight:600;color:#2C2C2A;margin:0 0 4px;">Your daily review digest</h1>
+          <p style="font-size:13px;color:#5F5E5A;margin:0;">Hi ${escapeHtml(recipientName)} — here's what's new across your ${appSections.length} tracked app${appSections.length === 1 ? '' : 's'}.</p>
         </td></tr>
-        <tr><td style="padding:0 28px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;"><tr>
-            <td style="background-color:#F1EFE8;border-radius:8px;padding:12px;width:33%;text-align:center;"><div style="font-size:22px;font-weight:600;color:#2C2C2A;">${total}</div><div style="font-size:10px;color:#888780;margin-top:2px;">Analysed</div></td>
-            <td style="width:8px;"></td>
-            <td style="background-color:#FCEBEB;border-radius:8px;padding:12px;width:33%;text-align:center;"><div style="font-size:22px;font-weight:600;color:#A32D2D;">${actionItems.length}</div><div style="font-size:10px;color:#A32D2D;margin-top:2px;">High priority</div></td>
-            <td style="width:8px;"></td>
-            <td style="background-color:#EAF3DE;border-radius:8px;padding:12px;width:33%;text-align:center;"><div style="font-size:22px;font-weight:600;color:#27500A;">${positive}</div><div style="font-size:10px;color:#27500A;margin-top:2px;">Positive</div></td>
-          </tr></table>
-        </td></tr>
-        <tr><td style="padding:0 28px;">
-          <p style="font-size:11px;font-weight:600;color:#888780;text-transform:uppercase;margin:0 0 10px;">Rating breakdown</p>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">${starRowsHtml}</table>
-        </td></tr>
-        <tr><td style="padding:0 28px;">
-          <p style="font-size:11px;font-weight:600;color:#888780;text-transform:uppercase;margin:0 0 10px;">Key action points</p>
-          ${actionItemsHtml}
-        </td></tr>
-        <tr><td style="padding:8px 28px 28px;text-align:center;">
-          <a href="${dashboardUrl}" style="display:inline-block;background-color:#D85A30;color:#FFFFFF;font-size:13px;font-weight:600;text-decoration:none;padding:12px 28px;border-radius:8px;">View full details on dashboard</a>
-        </td></tr>
-        <tr><td style="background-color:#F1EFE8;padding:16px 28px;text-align:center;">
-          <p style="font-size:11px;color:#888780;margin:0;">You're receiving this because you subscribed to ${escapeHtml(appName)} updates on Track Your App.</p>
+        ${appSections.map(s => s.html).join('')}
+        <tr><td style="background-color:#F1EFE8;padding:16px 28px;text-align:center;margin-top:24px;">
+          <p style="font-size:11px;color:#888780;margin:0;">You're receiving this because you're tracking apps on Track Your App.</p>
         </td></tr>
       </table>
     </td></tr></table>
@@ -122,24 +125,20 @@ export async function GET(request) {
     return NextResponse.json({ message: 'No active subscriptions found.' });
   }
 
-  const results = [];
-
-  // Group subscriptions by app so we only scrape each app once
-  const appMap = new Map();
+  // Step 1: scrape + analyze each unique app once
+  const uniqueApps = new Map();
   subscriptions.forEach(sub => {
-    if (!sub.apps) return;
-    if (!appMap.has(sub.apps.id)) {
-      appMap.set(sub.apps.id, { app: sub.apps, recipients: [] });
+    if (sub.apps && !uniqueApps.has(sub.apps.id)) {
+      uniqueApps.set(sub.apps.id, sub.apps);
     }
-    appMap.get(sub.apps.id).recipients.push(sub.email);
   });
 
-  for (const [appId, { app, recipients }] of appMap) {
+  const appScrapeResults = [];
+
+  for (const [appId, app] of uniqueApps) {
     try {
-      // Scrape latest reviews
       const scraped = await gplay.reviews({ appId: app.package_name, sort: gplay.sort.NEWEST, num: 10 });
 
-      // Only process reviews we don't already have (basic duplicate check by review text)
       const { data: existingReviews } = await supabase
         .from('reviews')
         .select('review_text')
@@ -164,33 +163,49 @@ export async function GET(request) {
         });
       }
 
-      // Fetch all reviews for the email (not just new ones)
       const { data: allReviews } = await supabase
         .from('reviews')
         .select('*')
         .eq('app_id', appId)
         .order('created_at', { ascending: false });
 
-      const html = buildEmailHtml({
-        recipientName: 'there',
-        appName: app.app_name,
-        reviews: allReviews || [],
-        dashboardUrl: `https://track-your-app.vercel.app/dashboard/${appId}`
-      });
-
-      for (const email of recipients) {
-        await resend.emails.send({
-          from: 'onboarding@resend.dev',
-          to: email,
-          subject: `Your daily dose of ${app.app_name} reviews`,
-          html
-        });
-      }
-
-      results.push({ app: app.app_name, newReviews: newReviews.length, emailsSent: recipients.length });
+      appScrapeResults.push({ appId, app, newReviewsCount: newReviews.length, allReviews: allReviews || [] });
     } catch (err) {
-      results.push({ app: app.app_name, error: err.message });
+      appScrapeResults.push({ appId, app, error: err.message, allReviews: [] });
     }
+  }
+
+  // Step 2: group subscriptions by user, build one email per user
+  const userMap = new Map();
+  subscriptions.forEach(sub => {
+    if (!sub.apps) return;
+    if (!userMap.has(sub.email)) {
+      userMap.set(sub.email, []);
+    }
+    userMap.get(sub.email).push(sub.apps.id);
+  });
+
+  const results = [];
+
+  for (const [email, appIds] of userMap) {
+    const appSections = appIds.map(appId => {
+      const result = appScrapeResults.find(r => r.appId === appId);
+      if (!result) return null;
+      return { appId, html: buildAppSection(result.app, result.allReviews) };
+    }).filter(Boolean);
+
+    if (appSections.length === 0) continue;
+
+    const html = buildEmailHtml({ recipientName: 'there', appSections });
+
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: email,
+      subject: `Your daily digest — ${appSections.length} app${appSections.length === 1 ? '' : 's'} tracked`,
+      html
+    });
+
+    results.push({ email, appsIncluded: appSections.length });
   }
 
   return NextResponse.json({ success: true, results });

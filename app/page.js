@@ -5,6 +5,13 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white">
 
+      <nav className="flex justify-between items-center px-6 py-4 max-w-5xl mx-auto">
+        <span className="font-semibold text-gray-900">Track Your App</span>
+        <a href="/login" className="text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg transition-colors">
+          Log in
+        </a>
+      </nav>
+
       {/* Hero */}
       <section className="px-6 pt-24 pb-20 text-center bg-gray-50">
         <div className="max-w-2xl mx-auto">
