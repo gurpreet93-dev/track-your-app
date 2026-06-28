@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase-server";
+import AddAppForm from './AddAppForm';
 
 export default async function Dashboard() {
   const supabase = await createClient();
@@ -95,6 +96,7 @@ export default async function Dashboard() {
             </button>
           </form>
         </div>
+        <AddAppForm />
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
