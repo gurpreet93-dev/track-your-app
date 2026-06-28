@@ -7,7 +7,6 @@ import Logo from '../Logo';
 export default async function Dashboard() {
   const supabase = await createClient();
 
-  // Get logged-in user
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -16,7 +15,6 @@ export default async function Dashboard() {
     redirect("/login");
   }
 
-  // Get active subscriptions and related apps
   const { data: subscriptions } = await supabase
     .from("subscriptions")
     .select(
@@ -33,14 +31,12 @@ export default async function Dashboard() {
     )
     .eq("active", true);
 
-  // Remove any null apps
   const apps = subscriptions
     ? subscriptions
         .map((sub) => sub.apps)
         .filter(Boolean)
     : [];
 
-  // Fetch review stats for each app
   const appStats = await Promise.all(
     apps.map(async (app) => {
       const { data: reviews } = await supabase
@@ -79,7 +75,8 @@ export default async function Dashboard() {
 
   return (
     <main className="min-h-screen bg-gray-50 px-6 py-10">
-      <div className="flex items-center justify-between mb-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
           <div>
             <Logo size={24} />
             <h1 className="text-2xl font-semibold text-gray-900 mt-2">
@@ -96,9 +93,9 @@ export default async function Dashboard() {
             </button>
           </form>
         </div>
+
         <AddAppForm />
 
-        {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           <div className="bg-white rounded-lg p-4 border border-gray-200">
             <div className="text-2xl font-semibold text-gray-900">
@@ -128,7 +125,6 @@ export default async function Dashboard() {
           </div>
         </div>
 
-        {/* Empty State */}
         {apps.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
             <h2 className="text-lg font-medium text-gray-900 mb-2">
