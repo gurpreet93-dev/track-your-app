@@ -13,6 +13,15 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function analyzeReview(reviewText, rating) {
+  if (process.env.PAUSE_AI_ANALYSIS === 'true') {
+    return {
+      sentiment: 'neutral',
+      urgency: 'low',
+      category: 'other',
+      summary: 'AI analysis temporarily paused'
+    };
+  }
+
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
