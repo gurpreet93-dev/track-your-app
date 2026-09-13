@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '../../../../lib/supabase-server';
-import { stripe } from '../../../../lib/stripe';
+import { getStripe } from '../../../../lib/stripe';
 import { getBillingAccount } from '../../../../lib/billing';
 
 export async function POST(request) {
@@ -18,7 +18,7 @@ export async function POST(request) {
   const account = await getBillingAccount(supabase, user.id);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     mode: 'subscription',
     line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
     client_reference_id: user.id,

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { stripe } from '../../../../lib/stripe';
+import { getStripe } from '../../../../lib/stripe';
 import { createAdminClient } from '../../../../lib/supabase-admin';
 
 // Stripe subscription statuses we care about map straight onto our own
@@ -18,6 +18,7 @@ export async function POST(request) {
 
   const body = await request.text();
   const signature = request.headers.get('stripe-signature');
+  const stripe = getStripe();
 
   let event;
   try {
