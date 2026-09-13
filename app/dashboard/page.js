@@ -92,7 +92,7 @@ export default async function Dashboard() {
           </div>
 
           <form action="/auth/signout" method="post">
-            <button className="text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg transition-colors">
+            <button className="text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 px-4 py-2 rounded-full transition-colors">
               Log out
             </button>
           </form>
@@ -109,7 +109,7 @@ export default async function Dashboard() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
             <div className="text-2xl font-semibold text-gray-900">
               {apps.length}
             </div>
@@ -118,7 +118,7 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-red-50 rounded-lg p-4 border border-red-100">
+          <div className="bg-red-50 rounded-2xl p-4 border border-red-100">
             <div className="text-2xl font-semibold text-red-700">
               {totalHighPriority}
             </div>
@@ -127,7 +127,7 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-gray-100 rounded-lg p-4">
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
             <div className="text-2xl font-semibold text-gray-900">
               {totalReviews}
             </div>
@@ -138,7 +138,7 @@ export default async function Dashboard() {
         </div>
 
         {apps.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
+          <div className="text-center py-16 bg-white rounded-2xl border border-gray-200 shadow-sm">
             <h2 className="text-lg font-medium text-gray-900 mb-2">
               No apps tracked yet
             </h2>
@@ -153,7 +153,7 @@ export default async function Dashboard() {
               <Link
                 key={app.id}
                 href={`/dashboard/${app.id}`}
-                className="bg-white rounded-lg p-5 border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
+                className="bg-white rounded-2xl shadow-sm p-5 border border-gray-200 hover:border-orange-200 hover:shadow-md transition-all"
               >
                 <h3 className="font-medium text-gray-900 mb-3">
                   {app.app_name}

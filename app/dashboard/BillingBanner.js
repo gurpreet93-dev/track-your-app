@@ -24,7 +24,7 @@ export default function BillingBanner({ status, daysLeft, priceDisplay }) {
 
   if (status === 'active') {
     return (
-      <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-2.5 mb-6 text-sm">
+      <div className="flex items-center justify-between bg-white border border-gray-200 rounded-2xl shadow-sm px-4 py-3 mb-6 text-sm">
         <span className="text-gray-500">Subscription active — thanks for supporting Track Your App.</span>
         <button
           onClick={() => goTo('/api/stripe/portal', setLoading, setError)}
@@ -40,7 +40,7 @@ export default function BillingBanner({ status, daysLeft, priceDisplay }) {
   const expired = status !== 'trialing';
 
   return (
-    <div className={`rounded-lg px-4 py-3 mb-6 border ${expired ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200'}`}>
+    <div className={`rounded-2xl px-4 py-4 mb-6 border shadow-sm ${expired ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200'}`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           {expired ? (
@@ -59,7 +59,7 @@ export default function BillingBanner({ status, daysLeft, priceDisplay }) {
         <button
           onClick={() => goTo('/api/stripe/checkout', setLoading, setError)}
           disabled={loading}
-          className="bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap"
+          className="bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white text-sm font-medium px-4 py-2.5 rounded-full shadow-sm shadow-orange-200 transition-all disabled:opacity-50 whitespace-nowrap"
         >
           {loading ? 'Loading...' : 'Upgrade now'}
         </button>
