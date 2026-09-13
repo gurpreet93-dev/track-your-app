@@ -138,7 +138,10 @@ export async function POST(request) {
           urgency: analysis.urgency,
           category: analysis.category,
           summary: analysis.summary,
-          processed: true
+          processed: true,
+          replied: Boolean(review.replyText),
+          reply_text: review.replyText || null,
+          reply_date: review.replyDate || null
         });
       }
     } catch (e) {

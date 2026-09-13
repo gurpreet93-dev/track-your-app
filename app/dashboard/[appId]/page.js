@@ -46,6 +46,9 @@ export default async function AppDetail({ params }) {
   const positive = allReviews.filter(r => r.sentiment === 'positive');
   const negative = allReviews.filter(r => r.sentiment === 'negative');
   const actionItems = allReviews.filter(r => ['critical', 'high', 'medium'].includes(r.urgency));
+  const repliedCount = allReviews.filter(r => r.replied).length;
+  const responseRate = total > 0 ? Math.round((repliedCount / total) * 100) : null;
+  const unrepliedNegative = negative.filter(r => !r.replied);
 
   const starCounts = [5, 4, 3, 2, 1].map(star => ({
     star,
@@ -81,7 +84,7 @@ export default async function AppDetail({ params }) {
         <p className="text-gray-500 text-sm mb-8">{app.package_name}</p>
 
         {/* Stats row */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-lg p-4 border border-gray-200">
             <div className="text-2xl font-semibold text-gray-900">{total}</div>
             <div className="text-xs text-gray-500 mt-1">Reviews analysed</div>
@@ -93,6 +96,10 @@ export default async function AppDetail({ params }) {
           <div className="bg-green-50 rounded-lg p-4">
             <div className="text-2xl font-semibold text-green-700">{positive.length}</div>
             <div className="text-xs text-green-600 mt-1">Positive</div>
+          </div>
+          <div className="bg-blue-50 rounded-lg p-4">
+            <div className="text-2xl font-semibold text-blue-700">{responseRate === null ? '—' : `${responseRate}%`}</div>
+            <div className="text-xs text-blue-600 mt-1">Response rate</div>
           </div>
         </div>
 
@@ -157,11 +164,18 @@ export default async function AppDetail({ params }) {
             {negative.length === 0 ? (
               <p className="text-sm text-red-700">No negative feedback right now.</p>
             ) : (
-              <ul className="space-y-1">
-                {negative.slice(0, 3).map(r => (
-                  <li key={r.id} className="text-sm text-red-800">— {r.summary}</li>
-                ))}
-              </ul>
+              <>
+                {unrepliedNegative.length > 0 && (
+                  <p className="text-xs text-red-600 mb-2">
+                    {unrepliedNegative.length} of {negative.length} negative review{negative.length === 1 ? '' : 's'} still {unrepliedNegative.length === 1 ? "hasn't" : "haven't"} been replied to on the Play Store.
+                  </p>
+                )}
+                <ul className="space-y-1">
+                  {negative.slice(0, 3).map(r => (
+                    <li key={r.id} className="text-sm text-red-800">— {r.summary}</li>
+                  ))}
+                </ul>
+              </>
             )}
           </div>
         </div>
@@ -199,8 +213,17 @@ export default async function AppDetail({ params }) {
                     <span>· {r.rating}★</span>
                     <span className={`w-2 h-2 rounded-full ${sentimentDot[r.sentiment] || 'bg-gray-300'}`}></span>
                     <span className="capitalize">{r.sentiment}</span>
+                    {r.replied && (
+                      <span className="text-xs font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">Replied</span>
+                    )}
                   </div>
                   <p className="text-sm text-gray-700">{r.review_text}</p>
+                  {r.replied && r.reply_text && (
+                    <p className="text-sm text-gray-500 bg-gray-50 rounded-lg px-3 py-2 mt-2">
+                      <span className="font-medium text-gray-600">Developer reply: </span>
+                      {r.reply_text}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}

@@ -5,7 +5,7 @@ import { PRICE_DISPLAY } from '../lib/billing';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-white">
 
       <nav className="flex justify-between items-center px-6 py-4 max-w-5xl mx-auto">
         <Logo />
@@ -15,7 +15,7 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <section className="px-6 pt-24 pb-20 text-center bg-gray-50">
+      <section className="px-6 pt-24 pb-20 text-center">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-4">
             See what your users are really saying
@@ -54,7 +54,7 @@ export default function Home() {
       </section>
 
       {/* Feature grid */}
-      <section className="px-6 py-16 bg-gray-50">
+      <section className="px-6 py-16">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-semibold text-gray-900 text-center mb-10">What you get</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -77,7 +77,7 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section className="px-6 py-16 bg-gray-50">
+      <section className="px-6 py-16">
         <div className="max-w-md mx-auto text-center">
           <h2 className="text-2xl font-semibold text-gray-900 mb-2">Simple pricing</h2>
           <p className="text-gray-600 mb-10">Free for your first month. No card required to start.</p>
