@@ -1,6 +1,7 @@
 import HomepageForm from './HomepageForm';
-import { AlertTriangle, Mail, TrendingUp, LayoutGrid } from 'lucide-react';
+import { AlertTriangle, Mail, TrendingUp, LayoutGrid, Check } from 'lucide-react';
 import Logo from './Logo';
+import { PRICE_DISPLAY } from '../lib/billing';
 
 export default function Home() {
   return (
@@ -75,6 +76,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section className="px-6 py-16 bg-gray-50">
+        <div className="max-w-md mx-auto text-center">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Simple pricing</h2>
+          <p className="text-gray-600 mb-10">Free for your first month. No card required to start.</p>
+
+          <div className="bg-white border border-gray-200 rounded-xl p-8 text-left">
+            <p className="text-sm font-medium text-orange-600 mb-1">30-day free trial</p>
+            <div className="flex items-baseline gap-1 mb-6">
+              <span className="text-4xl font-semibold text-gray-900">{PRICE_DISPLAY}</span>
+              <span className="text-gray-500 text-sm">after your trial ends</span>
+            </div>
+            <ul className="space-y-3 mb-8">
+              {[
+                'Track unlimited apps',
+                'Daily AI-analyzed review digest',
+                'Sentiment & urgency scoring',
+                'Cancel anytime'
+              ].map(item => (
+                <li key={item} className="flex items-center gap-2 text-sm text-gray-700">
+                  <Check className="w-4 h-4 text-green-600 flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <a
+              href="/signup"
+              className="block text-center text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 px-4 py-3 rounded-lg transition-colors"
+            >
+              Start your free month
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="px-6 py-16">
         <div className="max-w-2xl mx-auto">
@@ -83,7 +119,7 @@ export default function Home() {
             {[
               { q: 'Do I need to install anything on my app?', a: 'No. We read public reviews from the Play Store listing — nothing to install or configure.' },
               { q: "Does this work for apps I don't own?", a: 'Yes — reviews are public. Track competitor apps too, to see what their users complain about.' },
-              { q: 'Is it free?', a: 'Yes, tracking apps and receiving daily digests is free to get started.' }
+              { q: 'Is it free?', a: `Your first month is completely free, no card required. After that it's ${PRICE_DISPLAY} to keep tracking apps and receiving digests.` }
             ].map(faq => (
               <div key={faq.q} className="p-5">
                 <h3 className="text-gray-900 text-sm font-medium mb-1">{faq.q}</h3>
