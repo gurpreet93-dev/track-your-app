@@ -36,8 +36,23 @@ export default function PrivacyPolicy() {
 
       <h2>Data retention</h2>
       <p>
-        We keep your account and review data for as long as your account is active. You can request
-        deletion of your account and associated data at any time by contacting us below.
+        We keep your account and review data for as long as your account is active. You can delete
+        your account yourself at any time from Settings — see our{' '}
+        <a href="/data-deletion">Data Deletion</a> page for how. Deletion is immediate; Stripe
+        separately retains payment records as required by law.
+      </p>
+
+      <h2>Your rights</h2>
+      <ul>
+        <li><strong>Access</strong> — ask us what data we hold about you.</li>
+        <li><strong>Correction</strong> — ask us to fix inaccurate account data.</li>
+        <li><strong>Deletion</strong> — delete your account and data yourself in Settings, or ask us to.</li>
+      </ul>
+
+      <h2>Children&apos;s privacy</h2>
+      <p>
+        {SITE_NAME}{' '}is not directed at children under 13, and we don&apos;t knowingly collect data
+        from them. If you believe a minor has created an account, contact us and we&apos;ll delete it.
       </p>
 
       <h2>Contact</h2>

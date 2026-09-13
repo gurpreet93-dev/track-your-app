@@ -41,6 +41,7 @@ const footerLinks = {
     { label: 'Privacy', href: '/privacy' },
     { label: 'Terms & Conditions', href: '/terms' },
     { label: 'Refund & Cancellation', href: '/refund-policy' },
+    { label: 'Data Deletion', href: '/data-deletion' },
     { label: 'Contact', href: '/contact' }
   ]
 };

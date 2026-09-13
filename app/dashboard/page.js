@@ -4,8 +4,6 @@ import { createClient } from "../../lib/supabase-server";
 import { getBillingStatus, PRICE_DISPLAY } from "../../lib/billing";
 import AddAppForm from './AddAppForm';
 import BillingBanner from './BillingBanner';
-import AccountMenu from './AccountMenu';
-import Logo from '../Logo';
 import { LayoutGrid, AlertTriangle, MessageSquare, ChevronRight, Inbox } from 'lucide-react';
 
 export default async function Dashboard() {
@@ -80,18 +78,10 @@ export default async function Dashboard() {
   );
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-orange-50/40 to-white">
-      <div className="sticky top-0 z-10 backdrop-blur-sm bg-white/80 border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Logo size={24} />
-          <AccountMenu userEmail={user.email} billingStatus={billing.status} />
-        </div>
-      </div>
+    <div>
+      <h1 className="text-2xl font-semibold text-gray-900 mb-8">Your Dashboard</h1>
 
-      <div className="max-w-4xl mx-auto px-6 py-10">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-8">Your Dashboard</h1>
-
-        <BillingBanner status={billing.status} daysLeft={billing.daysLeft} priceDisplay={PRICE_DISPLAY} />
+      <BillingBanner status={billing.status} daysLeft={billing.daysLeft} priceDisplay={PRICE_DISPLAY} />
 
         {billing.hasAccess ? (
           <AddAppForm />
@@ -198,7 +188,6 @@ export default async function Dashboard() {
             ))}
           </div>
         )}
-      </div>
-    </main>
+    </div>
   );
 }

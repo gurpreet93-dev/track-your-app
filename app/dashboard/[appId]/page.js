@@ -77,8 +77,7 @@ export default async function AppDetail({ params }) {
   const maxTrendValue = Math.max(...trendData.map(d => Math.max(d.positive, d.negative)), 1);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-orange-50/40 to-white px-6 py-10">
-      <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto">
 
         <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4">
           <ArrowLeft className="w-3.5 h-3.5" />
@@ -255,7 +254,6 @@ export default async function AppDetail({ params }) {
           </div>
         </div>
 
-      </div>
-    </main>
+    </div>
   );
 }
