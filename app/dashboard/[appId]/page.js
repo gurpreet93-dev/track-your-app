@@ -164,13 +164,15 @@ export default async function AppDetail({ params, searchParams }) {
   return (
     <div className="max-w-3xl mx-auto">
 
-        <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4">
-          <ArrowLeft className="w-3.5 h-3.5" />
-          Back to dashboard
-        </Link>
+        <div className="sticky top-16 z-10 bg-white/90 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6 pt-4 pb-3 mb-5 border-b border-gray-100">
+          <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-3">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back to dashboard
+          </Link>
 
-        <h1 className="text-2xl font-semibold text-gray-900 mb-1">{app.app_name}</h1>
-        <p className="text-gray-500 text-sm mb-8">{app.package_name}</p>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-1">{app.app_name}</h1>
+          <p className="text-gray-500 text-sm">{app.package_name}</p>
+        </div>
 
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
