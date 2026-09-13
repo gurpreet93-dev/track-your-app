@@ -1,5 +1,6 @@
 import HomepageForm from './HomepageForm';
 import FaqAccordion from './FaqAccordion';
+import Link from 'next/link';
 import {
   AlertTriangle,
   Mail,
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 import Logo from './Logo';
 import { PRICE_DISPLAY } from '../lib/billing';
+import { SITE_NAME } from '../lib/site';
 
 const steps = [
   { n: '1', title: 'Paste your link', body: 'Drop in your Play Store app URL, nothing else needed' },
@@ -23,11 +25,25 @@ const steps = [
 ];
 
 const features = [
-  { title: 'Critical bugs surface first', body: 'No more scrolling through hundreds of reviews to find the ones that matter.', Icon: AlertTriangle, bg: 'bg-red-50', color: 'text-red-600' },
-  { title: 'One email, every morning', body: 'A short digest with only what changed and what needs attention.', Icon: Mail, bg: 'bg-blue-50', color: 'text-blue-600' },
-  { title: 'Track sentiment over time', body: 'See whether things are getting better or worse, not just a snapshot.', Icon: TrendingUp, bg: 'bg-green-50', color: 'text-green-600' },
-  { title: 'Track multiple apps', body: 'One dashboard for every app you own or manage.', Icon: LayoutGrid, bg: 'bg-purple-50', color: 'text-purple-600' }
+  { title: 'Critical bugs surface first', body: 'No more scrolling through hundreds of reviews to find the ones that matter.', Icon: AlertTriangle },
+  { title: 'One email, every morning', body: 'A short digest with only what changed and what needs attention.', Icon: Mail },
+  { title: 'Track sentiment over time', body: 'See whether things are getting better or worse, not just a snapshot.', Icon: TrendingUp },
+  { title: 'Track multiple apps', body: 'One dashboard for every app you own or manage.', Icon: LayoutGrid }
 ];
+
+const footerLinks = {
+  Product: [
+    { label: 'Features', href: '#features' },
+    { label: 'Pricing', href: '#pricing' },
+    { label: 'How it works', href: '#how-it-works' }
+  ],
+  Legal: [
+    { label: 'Privacy', href: '/privacy' },
+    { label: 'Terms & Conditions', href: '/terms' },
+    { label: 'Refund & Cancellation', href: '/refund-policy' },
+    { label: 'Contact', href: '/contact' }
+  ]
+};
 
 const trustPills = [
   { label: 'No installation needed', Icon: ShieldCheck },
@@ -97,7 +113,7 @@ export default function Home() {
       </section>
 
       {/* How it works */}
-      <section className="px-6 py-16">
+      <section id="how-it-works" className="px-6 py-16 scroll-mt-20">
         <div className="max-w-4xl mx-auto">
           <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase text-center mb-3">How it works</p>
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 text-center mb-12">From link to digest in minutes</h2>
@@ -115,16 +131,95 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Feature grid */}
+      {/* See what's inside - mock product preview */}
       <section className="px-6 py-16">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase text-center mb-3">Take a look</p>
+          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 text-center mb-12">See what&apos;s inside</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            {/* Mock: dashboard overview */}
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+              <div className="flex items-center gap-1.5 px-4 py-3 border-b border-gray-100">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-300" />
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-300" />
+                <span className="w-2.5 h-2.5 rounded-full bg-green-300" />
+                <span className="ml-3 text-xs text-gray-400 font-mono">app.trackyourapp.com/dashboard</span>
+              </div>
+              <div className="p-5">
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <div className="text-lg font-semibold text-gray-900">4</div>
+                    <div className="text-[10px] text-gray-500">Apps tracked</div>
+                  </div>
+                  <div className="bg-red-50 rounded-xl p-3">
+                    <div className="text-lg font-semibold text-red-700">7</div>
+                    <div className="text-[10px] text-red-600">Needs attention</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <div className="text-lg font-semibold text-gray-900">312</div>
+                    <div className="text-[10px] text-gray-500">Reviews tracked</div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  {[
+                    { name: 'Daily Budget Tracker', reviews: 128, hp: 3 },
+                    { name: 'QuickFit Timer', reviews: 96, hp: 1 }
+                  ].map(app => (
+                    <div key={app.name} className="flex items-center justify-between bg-white border border-gray-100 rounded-xl px-3 py-2.5">
+                      <span className="text-sm font-medium text-gray-800">{app.name}</span>
+                      <span className="text-xs text-gray-400">{app.reviews} reviews · {app.hp} high priority</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Mock: app detail / sentiment */}
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+              <div className="flex items-center gap-1.5 px-4 py-3 border-b border-gray-100">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-300" />
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-300" />
+                <span className="w-2.5 h-2.5 rounded-full bg-green-300" />
+                <span className="ml-3 text-xs text-gray-400 font-mono">app.trackyourapp.com/dashboard/daily-budget-tracker</span>
+              </div>
+              <div className="p-5">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Rating breakdown</p>
+                <div className="space-y-1.5 mb-4">
+                  {[{ s: 5, w: 70 }, { s: 4, w: 45 }, { s: 3, w: 20 }, { s: 2, w: 10 }, { s: 1, w: 25 }].map(row => (
+                    <div key={row.s} className="flex items-center gap-2">
+                      <span className="text-[10px] text-gray-500 w-8">{row.s}★</span>
+                      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-amber-400 rounded-full" style={{ width: `${row.w}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="bg-red-50 border border-red-100 rounded-xl p-3">
+                  <div className="flex items-center gap-2 text-xs text-gray-700 mb-1">
+                    <span className="font-medium text-gray-900">Rohan K.</span>
+                    <span>· 1★</span>
+                    <span className="text-[10px] font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">Replied</span>
+                  </div>
+                  <p className="text-xs text-gray-600">App crashes every time I open the budget summary.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Feature grid */}
+      <section id="features" className="px-6 py-16 scroll-mt-20">
         <div className="max-w-3xl mx-auto">
           <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase text-center mb-3">What you get</p>
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 text-center mb-12">Everything you need, nothing you don&apos;t</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {features.map(feat => (
               <div key={feat.title} className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                <div className={`w-10 h-10 rounded-xl ${feat.bg} flex items-center justify-center mb-4`}>
-                  <feat.Icon className={`w-5 h-5 ${feat.color}`} />
+                <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center mb-4">
+                  <feat.Icon className="w-5 h-5 text-orange-600" />
                 </div>
                 <h3 className="text-gray-900 text-sm font-semibold mb-2">{feat.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">{feat.body}</p>
@@ -135,7 +230,7 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section className="px-6 py-16">
+      <section id="pricing" className="px-6 py-16 scroll-mt-20">
         <div className="max-w-md mx-auto text-center">
           <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-3">Pricing</p>
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-2">Simple pricing</h2>
@@ -200,8 +295,34 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="text-center py-8 text-gray-400 text-xs border-t border-gray-100">
-        Track Your App
+      <footer className="border-t border-gray-100 px-6 py-12">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-10">
+            <div className="col-span-2 sm:col-span-2">
+              <Logo size={22} />
+              <p className="text-xs text-gray-500 mt-3 max-w-xs leading-relaxed">
+                AI-analyzed Google Play review digests for app developers. Free for your first month.
+              </p>
+            </div>
+            {Object.entries(footerLinks).map(([heading, links]) => (
+              <div key={heading}>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">{heading}</p>
+                <ul className="space-y-2">
+                  {links.map(link => (
+                    <li key={link.label}>
+                      <Link href={link.href} className="text-sm text-gray-600 hover:text-gray-900">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="text-center text-gray-400 text-xs border-t border-gray-100 pt-6">
+            © {new Date().getFullYear()} {SITE_NAME}
+          </div>
+        </div>
       </footer>
     </main>
   );

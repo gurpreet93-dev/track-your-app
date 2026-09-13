@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '../../../lib/supabase-server';
+import { ArrowLeft, MessageSquare, AlertTriangle, ThumbsUp, Reply } from 'lucide-react';
 
 const urgencyStyles = {
   critical: 'bg-red-50 border-red-500 text-red-700',
@@ -76,31 +77,54 @@ export default async function AppDetail({ params }) {
   const maxTrendValue = Math.max(...trendData.map(d => Math.max(d.positive, d.negative)), 1);
 
   return (
-    <main className="min-h-screen bg-gray-50 px-6 py-10">
+    <main className="min-h-screen bg-gradient-to-b from-orange-50/40 to-white px-6 py-10">
       <div className="max-w-3xl mx-auto">
 
-        <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-block">← Back to dashboard</Link>
+        <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4">
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back to dashboard
+        </Link>
 
         <h1 className="text-2xl font-semibold text-gray-900 mb-1">{app.app_name}</h1>
         <p className="text-gray-500 text-sm mb-8">{app.package_name}</p>
 
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
-            <div className="text-2xl font-semibold text-gray-900">{total}</div>
-            <div className="text-xs text-gray-500 mt-1">Reviews analysed</div>
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0">
+              <MessageSquare className="w-4 h-4 text-gray-500" />
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-gray-900">{total}</div>
+              <div className="text-xs text-gray-500">Reviews analysed</div>
+            </div>
           </div>
-          <div className="bg-red-50 rounded-2xl p-4">
-            <div className="text-2xl font-semibold text-red-700">{actionItems.length}</div>
-            <div className="text-xs text-red-600 mt-1">High priority</div>
+          <div className="bg-red-50 rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
+              <AlertTriangle className="w-4 h-4 text-red-600" />
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-red-700">{actionItems.length}</div>
+              <div className="text-xs text-red-600">High priority</div>
+            </div>
           </div>
-          <div className="bg-green-50 rounded-2xl p-4">
-            <div className="text-2xl font-semibold text-green-700">{positive.length}</div>
-            <div className="text-xs text-green-600 mt-1">Positive</div>
+          <div className="bg-green-50 rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
+              <ThumbsUp className="w-4 h-4 text-green-600" />
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-green-700">{positive.length}</div>
+              <div className="text-xs text-green-600">Positive</div>
+            </div>
           </div>
-          <div className="bg-blue-50 rounded-2xl p-4">
-            <div className="text-2xl font-semibold text-blue-700">{responseRate === null ? '—' : `${responseRate}%`}</div>
-            <div className="text-xs text-blue-600 mt-1">Response rate</div>
+          <div className="bg-blue-50 rounded-2xl p-4 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
+              <Reply className="w-4 h-4 text-blue-600" />
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-blue-700">{responseRate === null ? '—' : `${responseRate}%`}</div>
+              <div className="text-xs text-blue-600">Response rate</div>
+            </div>
           </div>
         </div>
 
