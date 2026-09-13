@@ -1,5 +1,7 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '../../../lib/supabase-server';
+import { ArrowLeft, MessageSquare, AlertTriangle, ThumbsUp, Reply } from 'lucide-react';
 
 const urgencyStyles = {
   critical: 'bg-red-50 border-red-500 text-red-700',
@@ -75,36 +77,58 @@ export default async function AppDetail({ params }) {
   const maxTrendValue = Math.max(...trendData.map(d => Math.max(d.positive, d.negative)), 1);
 
   return (
-    <main className="min-h-screen bg-gray-50 px-6 py-10">
-      <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto">
 
-        <a href="/dashboard" className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-block">← Back to dashboard</a>
+        <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4">
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back to dashboard
+        </Link>
 
         <h1 className="text-2xl font-semibold text-gray-900 mb-1">{app.app_name}</h1>
         <p className="text-gray-500 text-sm mb-8">{app.package_name}</p>
 
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <div className="text-2xl font-semibold text-gray-900">{total}</div>
-            <div className="text-xs text-gray-500 mt-1">Reviews analysed</div>
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0">
+              <MessageSquare className="w-4 h-4 text-gray-500" />
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-gray-900">{total}</div>
+              <div className="text-xs text-gray-500">Reviews analysed</div>
+            </div>
           </div>
-          <div className="bg-red-50 rounded-lg p-4">
-            <div className="text-2xl font-semibold text-red-700">{actionItems.length}</div>
-            <div className="text-xs text-red-600 mt-1">High priority</div>
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+              <AlertTriangle className="w-4 h-4 text-red-600" />
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-gray-900">{actionItems.length}</div>
+              <div className="text-xs text-gray-500">High priority</div>
+            </div>
           </div>
-          <div className="bg-green-50 rounded-lg p-4">
-            <div className="text-2xl font-semibold text-green-700">{positive.length}</div>
-            <div className="text-xs text-green-600 mt-1">Positive</div>
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+              <ThumbsUp className="w-4 h-4 text-green-600" />
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-gray-900">{positive.length}</div>
+              <div className="text-xs text-gray-500">Positive</div>
+            </div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-4">
-            <div className="text-2xl font-semibold text-blue-700">{responseRate === null ? '—' : `${responseRate}%`}</div>
-            <div className="text-xs text-blue-600 mt-1">Response rate</div>
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0">
+              <Reply className="w-4 h-4 text-orange-600" />
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-gray-900">{responseRate === null ? '—' : `${responseRate}%`}</div>
+              <div className="text-xs text-gray-500">Response rate</div>
+            </div>
           </div>
         </div>
 
         {/* Rating breakdown */}
-        <div className="bg-white rounded-lg border border-gray-200 p-5 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-8">
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">Rating breakdown</h2>
           <div className="space-y-2">
             {starCounts.map(s => (
@@ -112,7 +136,7 @@ export default async function AppDetail({ params }) {
                 <span className="text-sm text-gray-600 w-14">{s.star} stars</span>
                 <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-amber-400 rounded-full"
+                    className="h-full bg-orange-400 rounded-full"
                     style={{ width: `${(s.count / maxStarCount) * 100}%` }}
                   ></div>
                 </div>
@@ -123,7 +147,7 @@ export default async function AppDetail({ params }) {
         </div>
 
         {/* Trend chart - simple CSS bar chart, no external library needed */}
-        <div className="bg-white rounded-lg border border-gray-200 p-5 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-8">
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">Sentiment trend (last 30 days)</h2>
           <div className="flex items-end gap-[2px] h-24">
             {trendData.map((d, i) => (
@@ -147,32 +171,32 @@ export default async function AppDetail({ params }) {
 
         {/* Working well / Needs attention split */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
             <h3 className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">Working well</h3>
             {positive.length === 0 ? (
-              <p className="text-sm text-green-700">No standout positive feedback yet.</p>
+              <p className="text-sm text-gray-500">No standout positive feedback yet.</p>
             ) : (
               <ul className="space-y-1">
                 {positive.slice(0, 3).map(r => (
-                  <li key={r.id} className="text-sm text-green-800">— {r.summary}</li>
+                  <li key={r.id} className="text-sm text-gray-700">— {r.summary}</li>
                 ))}
               </ul>
             )}
           </div>
-          <div className="bg-red-50 rounded-lg p-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
             <h3 className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-2">Needs attention</h3>
             {negative.length === 0 ? (
-              <p className="text-sm text-red-700">No negative feedback right now.</p>
+              <p className="text-sm text-gray-500">No negative feedback right now.</p>
             ) : (
               <>
                 {unrepliedNegative.length > 0 && (
-                  <p className="text-xs text-red-600 mb-2">
+                  <p className="text-xs text-gray-500 mb-2">
                     {unrepliedNegative.length} of {negative.length} negative review{negative.length === 1 ? '' : 's'} still {unrepliedNegative.length === 1 ? "hasn't" : "haven't"} been replied to on the Play Store.
                   </p>
                 )}
                 <ul className="space-y-1">
                   {negative.slice(0, 3).map(r => (
-                    <li key={r.id} className="text-sm text-red-800">— {r.summary}</li>
+                    <li key={r.id} className="text-sm text-gray-700">— {r.summary}</li>
                   ))}
                 </ul>
               </>
@@ -186,7 +210,7 @@ export default async function AppDetail({ params }) {
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Key action points</h2>
             <div className="space-y-2">
               {actionItems.map(r => (
-                <div key={r.id} className={`border-l-4 rounded-r-lg p-3 ${urgencyStyles[r.urgency] || urgencyStyles.medium}`}>
+                <div key={r.id} className={`border-l-4 rounded-r-xl p-3 ${urgencyStyles[r.urgency] || urgencyStyles.medium}`}>
                   <div className="flex justify-between text-xs font-semibold uppercase tracking-wide mb-1">
                     <span>{r.urgency} · {r.category?.replace('_', ' ')}</span>
                     <span>{r.rating}★ — {r.author}</span>
@@ -201,7 +225,7 @@ export default async function AppDetail({ params }) {
         {/* All reviews */}
         <div>
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">All reviews</h2>
-          <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 divide-y divide-gray-100">
             {allReviews.map(r => (
               <div key={r.id} className="p-4 flex gap-3">
                 <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-medium text-gray-600 flex-shrink-0">
@@ -230,7 +254,6 @@ export default async function AppDetail({ params }) {
           </div>
         </div>
 
-      </div>
-    </main>
+    </div>
   );
 }

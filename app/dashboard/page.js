@@ -4,7 +4,7 @@ import { createClient } from "../../lib/supabase-server";
 import { getBillingStatus, PRICE_DISPLAY } from "../../lib/billing";
 import AddAppForm from './AddAppForm';
 import BillingBanner from './BillingBanner';
-import Logo from '../Logo';
+import { LayoutGrid, AlertTriangle, MessageSquare, ChevronRight, Inbox } from 'lucide-react';
 
 export default async function Dashboard() {
   const supabase = await createClient();
@@ -78,27 +78,10 @@ export default async function Dashboard() {
   );
 
   return (
-    <main className="min-h-screen bg-gray-50 px-6 py-10">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <Logo size={24} />
-            <h1 className="text-2xl font-semibold text-gray-900 mt-2">
-              Your Dashboard
-            </h1>
-            <p className="text-gray-500 text-sm mt-1">
-              Logged in as {user.email}
-            </p>
-          </div>
+    <div>
+      <h1 className="text-2xl font-semibold text-gray-900 mb-8">Your Dashboard</h1>
 
-          <form action="/auth/signout" method="post">
-            <button className="text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg transition-colors">
-              Log out
-            </button>
-          </form>
-        </div>
-
-        <BillingBanner status={billing.status} daysLeft={billing.daysLeft} priceDisplay={PRICE_DISPLAY} />
+      <BillingBanner status={billing.status} daysLeft={billing.daysLeft} priceDisplay={PRICE_DISPLAY} />
 
         {billing.hasAccess ? (
           <AddAppForm />
@@ -109,36 +92,42 @@ export default async function Dashboard() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <div className="text-2xl font-semibold text-gray-900">
-              {apps.length}
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0">
+              <LayoutGrid className="w-4 h-4 text-gray-500" />
             </div>
-            <div className="text-xs text-gray-500 mt-1">
-              Apps Tracked
-            </div>
-          </div>
-
-          <div className="bg-red-50 rounded-lg p-4 border border-red-100">
-            <div className="text-2xl font-semibold text-red-700">
-              {totalHighPriority}
-            </div>
-            <div className="text-xs text-red-600 mt-1">
-              Needs Attention
+            <div>
+              <div className="text-xl font-semibold text-gray-900">{apps.length}</div>
+              <div className="text-xs text-gray-500">Apps tracked</div>
             </div>
           </div>
 
-          <div className="bg-gray-100 rounded-lg p-4">
-            <div className="text-2xl font-semibold text-gray-900">
-              {totalReviews}
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+              <AlertTriangle className="w-4 h-4 text-red-600" />
             </div>
-            <div className="text-xs text-gray-500 mt-1">
-              Reviews Tracked
+            <div>
+              <div className="text-xl font-semibold text-gray-900">{totalHighPriority}</div>
+              <div className="text-xs text-gray-500">Needs attention</div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0">
+              <MessageSquare className="w-4 h-4 text-gray-500" />
+            </div>
+            <div>
+              <div className="text-xl font-semibold text-gray-900">{totalReviews}</div>
+              <div className="text-xs text-gray-500">Reviews tracked</div>
             </div>
           </div>
         </div>
 
         {apps.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
+          <div className="text-center py-16 bg-white rounded-2xl border border-gray-200 shadow-sm">
+            <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+              <Inbox className="w-5 h-5 text-gray-400" />
+            </div>
             <h2 className="text-lg font-medium text-gray-900 mb-2">
               No apps tracked yet
             </h2>
@@ -153,11 +142,19 @@ export default async function Dashboard() {
               <Link
                 key={app.id}
                 href={`/dashboard/${app.id}`}
-                className="bg-white rounded-lg p-5 border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
+                className="group bg-white rounded-2xl shadow-sm p-5 border border-gray-200 hover:border-orange-200 hover:shadow-md transition-all"
               >
-                <h3 className="font-medium text-gray-900 mb-3">
-                  {app.app_name}
-                </h3>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center text-sm font-semibold text-orange-700 flex-shrink-0">
+                      {app.app_name.slice(0, 1).toUpperCase()}
+                    </div>
+                    <h3 className="font-medium text-gray-900">
+                      {app.app_name}
+                    </h3>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-orange-400 transition-colors" />
+                </div>
 
                 <div className="flex gap-6">
                   <div>
@@ -191,7 +188,6 @@ export default async function Dashboard() {
             ))}
           </div>
         )}
-      </div>
-    </main>
+    </div>
   );
 }
