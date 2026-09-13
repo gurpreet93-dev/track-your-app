@@ -2,6 +2,29 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '../../../lib/supabase-server';
 import { ArrowLeft, MessageSquare, AlertTriangle, ThumbsUp, Reply } from 'lucide-react';
+import ReviewFilters from './ReviewFilters';
+import Pagination from './Pagination';
+
+const REVIEWS_PAGE_SIZE = 10;
+
+function getDateRange(datePreset, from, to) {
+  const now = new Date();
+
+  if (datePreset === 'custom') {
+    if (!from) return null;
+    const fromDate = new Date(from);
+    const toDate = to ? new Date(to) : now;
+    return { from: fromDate, to: toDate };
+  }
+
+  const fromDate = new Date(now);
+  if (datePreset === 'last_month') fromDate.setMonth(fromDate.getMonth() - 1);
+  else if (datePreset === 'last_6_months') fromDate.setMonth(fromDate.getMonth() - 6);
+  else if (datePreset === 'last_year') fromDate.setFullYear(fromDate.getFullYear() - 1);
+  else return null;
+
+  return { from: fromDate, to: now };
+}
 
 const urgencyStyles = {
   critical: 'bg-red-50 border-red-500 text-red-700',
@@ -16,8 +39,32 @@ const sentimentDot = {
   negative: 'bg-red-500'
 };
 
-export default async function AppDetail({ params }) {
+const categoryLabels = {
+  bug: 'Bugs',
+  crash: 'Crashes',
+  feature_request: 'Feature Requests',
+  ux_issue: 'UX Issues',
+  praise: 'Praise',
+  other: 'Other'
+};
+
+// Groups reviews by their AI-assigned category into "themes" with a count
+// and one representative quote, sorted by how common each theme is.
+function groupThemes(reviewsList) {
+  const groups = new Map();
+  for (const r of reviewsList) {
+    const key = r.category || 'other';
+    if (!groups.has(key)) {
+      groups.set(key, { category: key, count: 0, example: r.summary || r.review_text });
+    }
+    groups.get(key).count += 1;
+  }
+  return [...groups.values()].sort((a, b) => b.count - a.count);
+}
+
+export default async function AppDetail({ params, searchParams }) {
   const { appId } = await params;
+  const sp = await searchParams;
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -51,6 +98,8 @@ export default async function AppDetail({ params }) {
   const repliedCount = allReviews.filter(r => r.replied).length;
   const responseRate = total > 0 ? Math.round((repliedCount / total) * 100) : null;
   const unrepliedNegative = negative.filter(r => !r.replied);
+  const complaintThemes = groupThemes(negative);
+  const loveThemes = groupThemes(positive);
 
   const starCounts = [5, 4, 3, 2, 1].map(star => ({
     star,
@@ -76,16 +125,54 @@ export default async function AppDetail({ params }) {
 
   const maxTrendValue = Math.max(...trendData.map(d => Math.max(d.positive, d.negative)), 1);
 
+  // Filtered + paginated query for the "All reviews" list — kept separate from
+  // the aggregates above so stats always reflect the whole app, not the filter.
+  const datePreset = sp.date || 'all';
+  const ratingFilter = sp.rating || '';
+  const searchQuery = sp.q || '';
+  const page = Math.max(1, parseInt(sp.page, 10) || 1);
+
+  let reviewsQuery = supabase
+    .from('reviews')
+    .select('*', { count: 'exact' })
+    .eq('app_id', appId);
+
+  if (ratingFilter) {
+    reviewsQuery = reviewsQuery.eq('rating', Number(ratingFilter));
+  }
+
+  const dateRange = getDateRange(datePreset, sp.from, sp.to);
+  if (dateRange) {
+    reviewsQuery = reviewsQuery
+      .gte('review_date', dateRange.from.toISOString())
+      .lte('review_date', dateRange.to.toISOString());
+  }
+
+  if (searchQuery) {
+    reviewsQuery = reviewsQuery.ilike('review_text', `%${searchQuery}%`);
+  }
+
+  const pageStart = (page - 1) * REVIEWS_PAGE_SIZE;
+  const { data: pagedReviewsData, count: filteredCount } = await reviewsQuery
+    .order('created_at', { ascending: false })
+    .range(pageStart, pageStart + REVIEWS_PAGE_SIZE - 1);
+
+  const pagedReviews = pagedReviewsData || [];
+  const totalFiltered = filteredCount || 0;
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / REVIEWS_PAGE_SIZE));
+
   return (
     <div className="max-w-3xl mx-auto">
 
-        <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4">
-          <ArrowLeft className="w-3.5 h-3.5" />
-          Back to dashboard
-        </Link>
+        <div className="sticky top-16 z-10 bg-white/90 backdrop-blur-sm -mx-4 sm:-mx-6 px-4 sm:px-6 pt-4 pb-3 mb-5 border-b border-gray-100">
+          <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-3">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back to dashboard
+          </Link>
 
-        <h1 className="text-2xl font-semibold text-gray-900 mb-1">{app.app_name}</h1>
-        <p className="text-gray-500 text-sm mb-8">{app.package_name}</p>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-1">{app.app_name}</h1>
+          <p className="text-gray-500 text-sm">{app.package_name}</p>
+        </div>
 
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -169,39 +256,67 @@ export default async function AppDetail({ params }) {
           </div>
         </div>
 
-        {/* Working well / Needs attention split */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
-            <h3 className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">Working well</h3>
-            {positive.length === 0 ? (
-              <p className="text-sm text-gray-500">No standout positive feedback yet.</p>
-            ) : (
-              <ul className="space-y-1">
-                {positive.slice(0, 3).map(r => (
-                  <li key={r.id} className="text-sm text-gray-700">— {r.summary}</li>
+        {/* Complaint themes */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-4">
+          <div className="flex items-center gap-2 mb-4">
+            <AlertTriangle className="w-4 h-4 text-red-600" />
+            <h2 className="text-sm font-semibold text-gray-900">Complaint themes</h2>
+          </div>
+
+          {negative.length === 0 ? (
+            <p className="text-sm text-gray-500">No negative feedback right now.</p>
+          ) : (
+            <>
+              {unrepliedNegative.length > 0 && (
+                <p className="text-xs text-gray-500 mb-4">
+                  {unrepliedNegative.length} of {negative.length} negative review{negative.length === 1 ? '' : 's'} still {unrepliedNegative.length === 1 ? "hasn't" : "haven't"} been replied to on the Play Store.
+                </p>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {complaintThemes.map(theme => (
+                  <div key={theme.category} className="border border-gray-200 rounded-xl p-4">
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <h3 className="text-sm font-medium text-gray-900">{categoryLabels[theme.category] || 'Other'}</h3>
+                      <span className="text-xs font-semibold text-red-600 bg-red-50 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
+                        {theme.count}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 italic line-clamp-2">&ldquo;{theme.example}&rdquo;</p>
+                  </div>
                 ))}
-              </ul>
-            )}
+              </div>
+              <p className="text-xs text-gray-400 mt-4">Your most common complaints, grouped automatically by category.</p>
+            </>
+          )}
+        </div>
+
+        {/* What users love */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <ThumbsUp className="w-4 h-4 text-green-600" />
+            <h2 className="text-sm font-semibold text-gray-900">What users love</h2>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
-            <h3 className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-2">Needs attention</h3>
-            {negative.length === 0 ? (
-              <p className="text-sm text-gray-500">No negative feedback right now.</p>
-            ) : (
-              <>
-                {unrepliedNegative.length > 0 && (
-                  <p className="text-xs text-gray-500 mb-2">
-                    {unrepliedNegative.length} of {negative.length} negative review{negative.length === 1 ? '' : 's'} still {unrepliedNegative.length === 1 ? "hasn't" : "haven't"} been replied to on the Play Store.
-                  </p>
-                )}
-                <ul className="space-y-1">
-                  {negative.slice(0, 3).map(r => (
-                    <li key={r.id} className="text-sm text-gray-700">— {r.summary}</li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
+
+          {positive.length === 0 ? (
+            <p className="text-sm text-gray-500">No standout positive feedback yet.</p>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {loveThemes.map(theme => (
+                  <div key={theme.category} className="border border-gray-200 rounded-xl p-4">
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <h3 className="text-sm font-medium text-gray-900">{categoryLabels[theme.category] || 'Other'}</h3>
+                      <span className="text-xs font-semibold text-green-600 bg-green-50 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0">
+                        {theme.count}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 italic line-clamp-2">&ldquo;{theme.example}&rdquo;</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-400 mt-4">What users praise most — your strengths to lean into.</p>
+            </>
+          )}
         </div>
 
         {/* Action items */}
@@ -224,9 +339,20 @@ export default async function AppDetail({ params }) {
 
         {/* All reviews */}
         <div>
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">All reviews</h2>
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 divide-y divide-gray-100">
-            {allReviews.map(r => (
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            All reviews {totalFiltered > 0 && <span className="normal-case font-normal text-gray-400">({totalFiltered})</span>}
+          </h2>
+
+          <ReviewFilters />
+
+          {pagedReviews.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-2xl border border-gray-200 shadow-sm">
+              <p className="text-sm text-gray-500">No reviews match these filters.</p>
+            </div>
+          ) : (
+            <>
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 divide-y divide-gray-100">
+                {pagedReviews.map(r => (
               <div key={r.id} className="p-4 flex gap-3">
                 <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-medium text-gray-600 flex-shrink-0">
                   {r.author ? r.author.slice(0, 2).toUpperCase() : '??'}
@@ -250,8 +376,11 @@ export default async function AppDetail({ params }) {
                   )}
                 </div>
               </div>
-            ))}
-          </div>
+                ))}
+              </div>
+              <Pagination page={page} totalPages={totalPages} />
+            </>
+          )}
         </div>
 
     </div>

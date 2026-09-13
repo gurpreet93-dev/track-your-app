@@ -12,9 +12,11 @@ const navItems = [
   { href: '/dashboard/settings', label: 'Settings', Icon: Settings }
 ];
 
-const pageLabels = {
-  '/dashboard': 'Dashboard',
-  '/dashboard/settings': 'Settings'
+const breadcrumbMap = {
+  '/dashboard': [{ label: 'Dashboard' }],
+  '/dashboard/settings': [{ label: 'Dashboard', href: '/dashboard' }, { label: 'Settings' }],
+  '/dashboard/settings/profile': [{ label: 'Dashboard', href: '/dashboard' }, { label: 'Settings', href: '/dashboard/settings' }, { label: 'Profile' }],
+  '/dashboard/settings/billing': [{ label: 'Dashboard', href: '/dashboard' }, { label: 'Settings', href: '/dashboard/settings' }, { label: 'Billing' }]
 };
 
 function PlanCard({ billing }) {
@@ -72,7 +74,12 @@ export default function DashboardShell({ userEmail, billing, children }) {
       </div>
       <nav className="flex-1 px-3 space-y-1">
         {navItems.map(item => {
-          const active = pathname === item.href;
+          // "/dashboard" is a prefix of every dashboard route, so it only
+          // counts as active for itself or an app-detail page — never for
+          // "/dashboard/settings/*", which the Settings item owns instead.
+          const active = item.href === '/dashboard'
+            ? pathname === '/dashboard' || (pathname.startsWith('/dashboard/') && !pathname.startsWith('/dashboard/settings'))
+            : pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
               key={item.href}
@@ -94,7 +101,7 @@ export default function DashboardShell({ userEmail, billing, children }) {
     </div>
   );
 
-  const breadcrumb = pageLabels[pathname] || null;
+  const breadcrumb = breadcrumbMap[pathname] || null;
 
   return (
     <div className="min-h-screen flex bg-gradient-to-b from-orange-50/40 to-white">
@@ -112,8 +119,8 @@ export default function DashboardShell({ userEmail, billing, children }) {
       )}
 
       <div className="flex-1 min-w-0">
-        <div className="sticky top-0 z-10 backdrop-blur-sm bg-white/80 border-b border-gray-100">
-          <div className="px-4 sm:px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 z-20 backdrop-blur-sm bg-white/80 border-b border-gray-100">
+          <div className="h-16 px-4 sm:px-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setMobileOpen(true)}
@@ -123,14 +130,17 @@ export default function DashboardShell({ userEmail, billing, children }) {
                 <Menu className="w-4 h-4 text-gray-600" />
               </button>
               {breadcrumb && (
-                <span className="text-sm text-gray-500">
-                  <Link href="/dashboard" className="hover:text-gray-700">Dashboard</Link>
-                  {breadcrumb !== 'Dashboard' && (
-                    <>
-                      <span className="mx-1.5 text-gray-300">/</span>
-                      <span className="text-gray-800 font-medium">{breadcrumb}</span>
-                    </>
-                  )}
+                <span className="text-sm text-gray-500 flex items-center">
+                  {breadcrumb.map((crumb, i) => (
+                    <span key={crumb.label} className="flex items-center">
+                      {i > 0 && <span className="mx-1.5 text-gray-300">/</span>}
+                      {crumb.href ? (
+                        <Link href={crumb.href} className="hover:text-gray-700">{crumb.label}</Link>
+                      ) : (
+                        <span className="text-gray-800 font-medium">{crumb.label}</span>
+                      )}
+                    </span>
+                  ))}
                 </span>
               )}
             </div>
