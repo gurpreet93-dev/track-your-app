@@ -99,31 +99,31 @@ export default async function AppDetail({ params }) {
               <div className="text-xs text-gray-500">Reviews analysed</div>
             </div>
           </div>
-          <div className="bg-red-50 rounded-2xl p-4 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
               <AlertTriangle className="w-4 h-4 text-red-600" />
             </div>
             <div>
-              <div className="text-xl font-semibold text-red-700">{actionItems.length}</div>
-              <div className="text-xs text-red-600">High priority</div>
+              <div className="text-xl font-semibold text-gray-900">{actionItems.length}</div>
+              <div className="text-xs text-gray-500">High priority</div>
             </div>
           </div>
-          <div className="bg-green-50 rounded-2xl p-4 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
               <ThumbsUp className="w-4 h-4 text-green-600" />
             </div>
             <div>
-              <div className="text-xl font-semibold text-green-700">{positive.length}</div>
-              <div className="text-xs text-green-600">Positive</div>
+              <div className="text-xl font-semibold text-gray-900">{positive.length}</div>
+              <div className="text-xs text-gray-500">Positive</div>
             </div>
           </div>
-          <div className="bg-blue-50 rounded-2xl p-4 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
-              <Reply className="w-4 h-4 text-blue-600" />
+          <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-200 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0">
+              <Reply className="w-4 h-4 text-orange-600" />
             </div>
             <div>
-              <div className="text-xl font-semibold text-blue-700">{responseRate === null ? '—' : `${responseRate}%`}</div>
-              <div className="text-xs text-blue-600">Response rate</div>
+              <div className="text-xl font-semibold text-gray-900">{responseRate === null ? '—' : `${responseRate}%`}</div>
+              <div className="text-xs text-gray-500">Response rate</div>
             </div>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default async function AppDetail({ params }) {
                 <span className="text-sm text-gray-600 w-14">{s.star} stars</span>
                 <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-amber-400 rounded-full"
+                    className="h-full bg-orange-400 rounded-full"
                     style={{ width: `${(s.count / maxStarCount) * 100}%` }}
                   ></div>
                 </div>
@@ -172,32 +172,32 @@ export default async function AppDetail({ params }) {
 
         {/* Working well / Needs attention split */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-green-50 rounded-2xl p-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
             <h3 className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">Working well</h3>
             {positive.length === 0 ? (
-              <p className="text-sm text-green-700">No standout positive feedback yet.</p>
+              <p className="text-sm text-gray-500">No standout positive feedback yet.</p>
             ) : (
               <ul className="space-y-1">
                 {positive.slice(0, 3).map(r => (
-                  <li key={r.id} className="text-sm text-green-800">— {r.summary}</li>
+                  <li key={r.id} className="text-sm text-gray-700">— {r.summary}</li>
                 ))}
               </ul>
             )}
           </div>
-          <div className="bg-red-50 rounded-2xl p-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
             <h3 className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-2">Needs attention</h3>
             {negative.length === 0 ? (
-              <p className="text-sm text-red-700">No negative feedback right now.</p>
+              <p className="text-sm text-gray-500">No negative feedback right now.</p>
             ) : (
               <>
                 {unrepliedNegative.length > 0 && (
-                  <p className="text-xs text-red-600 mb-2">
+                  <p className="text-xs text-gray-500 mb-2">
                     {unrepliedNegative.length} of {negative.length} negative review{negative.length === 1 ? '' : 's'} still {unrepliedNegative.length === 1 ? "hasn't" : "haven't"} been replied to on the Play Store.
                   </p>
                 )}
                 <ul className="space-y-1">
                   {negative.slice(0, 3).map(r => (
-                    <li key={r.id} className="text-sm text-red-800">— {r.summary}</li>
+                    <li key={r.id} className="text-sm text-gray-700">— {r.summary}</li>
                   ))}
                 </ul>
               </>
