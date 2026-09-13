@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import gplay from 'google-play-scraper';
 import OpenAI from 'openai';
+import { evaluateBillingAccount } from '../../../../lib/billing';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -125,13 +126,29 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data: subscriptions } = await supabase
+  const { data: allSubscriptions } = await supabase
     .from('subscriptions')
     .select('user_id, email, apps(id, app_name, package_name)')
     .eq('active', true);
 
-  if (!subscriptions || subscriptions.length === 0) {
+  if (!allSubscriptions || allSubscriptions.length === 0) {
     return NextResponse.json({ message: 'No active subscriptions found.' });
+  }
+
+  // Skip users whose free trial ended without an active paid subscription.
+  const userIds = [...new Set(allSubscriptions.map(sub => sub.user_id))];
+  const { data: billingAccounts } = await supabase
+    .from('billing_accounts')
+    .select('user_id, status, trial_ends_at')
+    .in('user_id', userIds);
+
+  const billingByUser = new Map((billingAccounts || []).map(acc => [acc.user_id, acc]));
+  const subscriptions = allSubscriptions.filter(sub =>
+    evaluateBillingAccount(billingByUser.get(sub.user_id)).hasAccess
+  );
+
+  if (subscriptions.length === 0) {
+    return NextResponse.json({ message: 'No subscriptions with active billing found.' });
   }
 
   // Step 1: scrape + analyze each unique app once
@@ -168,7 +185,10 @@ export async function GET(request) {
           urgency: analysis.urgency,
           category: analysis.category,
           summary: analysis.summary,
-          processed: true
+          processed: true,
+          replied: Boolean(review.replyText),
+          reply_text: review.replyText || null,
+          reply_date: review.replyDate || null
         });
       }
 

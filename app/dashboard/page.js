@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase-server";
+import { getBillingStatus, PRICE_DISPLAY } from "../../lib/billing";
 import AddAppForm from './AddAppForm';
+import BillingBanner from './BillingBanner';
 import Logo from '../Logo';
 
 export default async function Dashboard() {
@@ -14,6 +16,8 @@ export default async function Dashboard() {
   if (!user) {
     redirect("/login");
   }
+
+  const billing = await getBillingStatus(supabase, user.id);
 
   const { data: subscriptions } = await supabase
     .from("subscriptions")
@@ -94,7 +98,15 @@ export default async function Dashboard() {
           </form>
         </div>
 
-        <AddAppForm />
+        <BillingBanner status={billing.status} daysLeft={billing.daysLeft} priceDisplay={PRICE_DISPLAY} />
+
+        {billing.hasAccess ? (
+          <AddAppForm />
+        ) : (
+          <p className="text-sm text-gray-500 mb-8">
+            Your existing tracked apps are still shown below. Subscribe above to add new ones.
+          </p>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           <div className="bg-white rounded-lg p-4 border border-gray-200">

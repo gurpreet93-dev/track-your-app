@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '../../../lib/supabase-server';
+import { getBillingStatus } from '../../../lib/billing';
 import gplay from 'google-play-scraper';
 import OpenAI from 'openai';
 
@@ -40,6 +41,14 @@ export async function POST(request) {
 
   if (!user) {
     return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
+  }
+
+  const billing = await getBillingStatus(supabase, user.id);
+  if (!billing.hasAccess) {
+    return NextResponse.json(
+      { error: 'Your free trial has ended. Subscribe to keep tracking apps.' },
+      { status: 402 }
+    );
   }
 
   const { storeUrl } = await request.json();
@@ -129,7 +138,10 @@ export async function POST(request) {
           urgency: analysis.urgency,
           category: analysis.category,
           summary: analysis.summary,
-          processed: true
+          processed: true,
+          replied: Boolean(review.replyText),
+          reply_text: review.replyText || null,
+          reply_date: review.replyDate || null
         });
       }
     } catch (e) {
