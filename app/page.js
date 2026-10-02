@@ -64,7 +64,7 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-white">
 
       <nav className="sticky top-0 z-10 backdrop-blur-sm bg-white/70 border-b border-gray-100">
-        <div className="flex justify-between items-center px-6 py-4 max-w-5xl mx-auto">
+        <div className="flex justify-between items-center px-6 sm:px-10 lg:px-16 py-4">
           <Logo />
           <a
             href="/login"
@@ -76,7 +76,7 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <section className="px-6 pt-20 pb-16 text-center">
+      <section className="px-6 sm:px-10 lg:px-16 pt-20 pb-16 text-center">
         <div className="max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-white border border-orange-200 rounded-full px-4 py-1.5 text-xs font-medium text-orange-700 shadow-sm mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
@@ -99,7 +99,7 @@ export default function Home() {
       </section>
 
       {/* Trust pills */}
-      <section className="px-6 pb-16">
+      <section className="px-6 sm:px-10 lg:px-16 pb-16">
         <div className="max-w-3xl mx-auto flex flex-wrap justify-center gap-3">
           {trustPills.map(pill => (
             <div
@@ -114,8 +114,8 @@ export default function Home() {
       </section>
 
       {/* How it works */}
-      <section id="how-it-works" className="px-6 py-16 scroll-mt-20">
-        <div className="max-w-4xl mx-auto">
+      <section id="how-it-works" className="px-6 sm:px-10 lg:px-16 py-16 scroll-mt-20">
+        <div className="max-w-5xl mx-auto">
           <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase text-center mb-3">How it works</p>
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 text-center mb-12">From link to digest in minutes</h2>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -133,8 +133,8 @@ export default function Home() {
       </section>
 
       {/* See what's inside - mock product preview */}
-      <section className="px-6 py-16">
-        <div className="max-w-4xl mx-auto">
+      <section className="px-6 sm:px-10 lg:px-16 py-16">
+        <div className="max-w-5xl mx-auto">
           <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase text-center mb-3">Take a look</p>
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 text-center mb-12">See what&apos;s inside</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -212,8 +212,8 @@ export default function Home() {
       </section>
 
       {/* Feature grid */}
-      <section id="features" className="px-6 py-16 scroll-mt-20">
-        <div className="max-w-3xl mx-auto">
+      <section id="features" className="px-6 sm:px-10 lg:px-16 py-16 scroll-mt-20">
+        <div className="max-w-4xl mx-auto">
           <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase text-center mb-3">What you get</p>
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 text-center mb-12">Everything you need, nothing you don&apos;t</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -231,7 +231,7 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="px-6 py-16 scroll-mt-20">
+      <section id="pricing" className="px-6 sm:px-10 lg:px-16 py-16 scroll-mt-20">
         <div className="max-w-md mx-auto text-center">
           <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-3">Pricing</p>
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-2">Simple pricing</h2>
@@ -272,7 +272,7 @@ export default function Home() {
       </section>
 
       {/* FAQ */}
-      <section className="px-6 py-16">
+      <section className="px-6 sm:px-10 lg:px-16 py-16">
         <div className="max-w-2xl mx-auto">
           <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase text-center mb-3">Answered ahead of time</p>
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 text-center mb-10">Frequently asked questions</h2>
@@ -281,8 +281,8 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="px-6 pb-16">
-        <div className="max-w-3xl mx-auto bg-gradient-to-br from-orange-100 via-orange-50 to-white border border-orange-200 rounded-3xl p-10 sm:p-14 text-center">
+      <section className="px-6 sm:px-10 lg:px-16 pb-16">
+        <div className="max-w-4xl mx-auto bg-gradient-to-br from-orange-100 via-orange-50 to-white border border-orange-200 rounded-3xl p-10 sm:p-14 text-center">
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-3">Stop guessing what users think.</h2>
           <p className="text-gray-600 mb-8 max-w-md mx-auto">Connect your app in under a minute. Your first digest lands tomorrow morning.</p>
           <a
@@ -296,8 +296,8 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-gray-100 px-6 py-12">
-        <div className="max-w-4xl mx-auto">
+      <footer className="border-t border-gray-100 px-6 sm:px-10 lg:px-16 py-12">
+        <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-10">
             <div className="col-span-2 sm:col-span-2">
               <Logo size={22} />

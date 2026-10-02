@@ -105,7 +105,7 @@ export default function DashboardShell({ userEmail, billing, children }) {
 
   return (
     <div className="min-h-screen flex bg-gradient-to-b from-orange-50/40 to-white">
-      <aside className="hidden md:flex md:w-60 md:flex-col border-r border-gray-100 bg-white flex-shrink-0">
+      <aside className="hidden md:flex md:w-60 md:flex-col md:sticky md:top-0 md:h-screen md:self-start md:overflow-y-auto border-r border-gray-100 bg-white flex-shrink-0">
         {sidebarContent}
       </aside>
 

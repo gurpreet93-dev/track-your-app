@@ -5,7 +5,7 @@ export default function LegalPage({ title, updated, children }) {
   return (
     <main className="min-h-screen bg-white">
       <nav className="border-b border-gray-100">
-        <div className="flex justify-between items-center px-6 py-4 max-w-3xl mx-auto">
+        <div className="flex justify-between items-center px-6 sm:px-10 lg:px-16 py-4">
           <Link href="/">
             <Logo size={28} />
           </Link>
